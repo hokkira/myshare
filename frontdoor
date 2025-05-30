@@ -1,0 +1,37 @@
+#!/bin/bash
+#description "do live job", /usr/local/bin/frontdoor
+#author "hokkira"
+# this script will call by systemd right after boot up
+CMD=$(cat /proc/cmdline)
+for i in $CMD; do
+  case $i in
+    image_dir=*)   SQ_DIR=${i#*=}
+    export SQ_DIR
+    ;;
+    UUID=*) Media=${i#*=}
+    export Media
+    ;;
+    frontdoor_01)
+    exec /usr/local/bin/frontdoor_01
+    ;;
+  esac
+done
+
+Disk=`blkid|grep $Media|cut -d':' -f1`
+
+echo "/usr/local/bin/frontdoor" >> /tmp/frontdoor.log
+
+if mount|grep $Disk ; then 
+    Duuid=`mount|grep $Disk|awk '{print $3}'`
+    echo "exec $Duuid/$SQ_DIR/frontdoor $SQ_DIR"
+    echo "exec $Duuid/$SQ_DIR/frontdoor $SQ_DIR" >> /tmp/frontdoor.log
+    exec $Duuid/$SQ_DIR/frontdoor $SQ_DIR
+
+else
+  SD=`echo $Disk|cut -d'/' -f3`
+  mkdir /media/$SD
+  mount $Disk /media/$SD
+  echo "exec /media/$SD/$SQ_DIR/frontdoor $SQ_DIR" >> /tmp/frontdoor.log
+  exec /media/$SD/$SQ_DIR/frontdoor $SQ_DIR
+
+fi
