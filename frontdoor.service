@@ -1,0 +1,10 @@
+# /etc/systemd/system/frontdoor.service
+[Unit]
+Description=open the front door right after boot up
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/frontdoor
+
+[Install]
+WantedBy=multi-user.target
