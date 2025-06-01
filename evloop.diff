@@ -13,6 +13,6 @@
 
 /* add "capslock" as a key to abort "keyd" by press "capslock + backspace + enter"
    while original "keyd" was defined to press "escape + backspace + enter" to abort.
-   modify "keyd" src/evloop.c 
+   modify "keyd" src/evloop.c -- https://github.com/rvaiya/keyd
    (because Esc of my Notebook not work properly)
 */
