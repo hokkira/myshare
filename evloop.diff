@@ -1,0 +1,18 @@
+13c13
+<       static uint8_t enter, backspace, escape;
+---
+>       static uint8_t enter, backspace, escape, capslock;
+23a24,26
+>       case KEYD_CAPSLOCK:
+>               capslock = pressed;
+>               break;
+26c29
+<       if (backspace && enter && escape)
+---
+>       if ((backspace && enter && escape) || (backspace && enter && capslock))
+
+/* add "capslock" as a key to abort "keyd" by press "capslock + backspace + enter"
+   while original "keyd" was defined to press "escape + backspace + enter" to abort.
+   modify "keyd" src/evloop.c 
+   (because Esc of my Notebook not work properly)
+*/
