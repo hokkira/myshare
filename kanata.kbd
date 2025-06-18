@@ -1,0 +1,163 @@
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt          spc          ralt rmet rctl
+)
+
+(defvar
+  streak-count 3
+  streak-time 325
+  tap-timeout 200
+  hold-timeout 500
+  hold-time-slow 300
+  chord-timeout 50
+)
+
+(deftemplate charmod (char mod)
+  (switch 
+    ((key-timing $streak-count less-than $streak-time)) $char break
+    () (tap-hold-release-timeout $tap-timeout $hold-timeout $char $mod $char) break
+  )
+)
+
+(defchords piano $chord-timeout
+  ( 2 ) 2
+  ( 3 ) 3
+  ( q ) q
+  ( w ) (tap-hold 200 200 w (layer-while-held himep))
+  ( e ) (tap-hold 200 200 e (layer-while-held mmouse))
+  ( r ) r
+  ( f ) (t! charmod f lmet)
+  ( g ) g
+  ( 2 3 ) esc
+  ( w e ) A-left
+  ( e f ) home
+  ( r g ) C-S--
+  ( x ) x
+  ( c ) c
+  ( v ) v
+  ( b ) b
+  ( 9 ) 9
+  ( 0 ) 0
+  ( - ) -
+  ( u ) u
+  ( i ) i
+  ( o ) o
+  ( p ) p
+  ( h ) h
+  ( j ) (t! charmod j rmet)
+  ( m ) m
+  ( , ) ,
+  ( . ) .
+  ( x c ) A-tab
+  ( c v ) mmid
+  ( v b ) enter
+  ( i o ) A-right
+  ( i j ) end
+  ( u h ) pgup
+  ( h b ) pgdn
+  ( 9 0 ) bspc
+  ( m , ) C-f12
+  ( , . ) C-tab
+)
+
+(deflayermap (main)
+  ;; for some Notebook combine up/down/left/right with pgup/pgdn/home/end
+  ;; use tap-dance to set one key with multiple functions by tapping more than once
+  ;; KEY (tap-dance timeout ACTIONa ACTIONb ACTIONc)
+  up (tap-dance 170 (up pgup))
+  down (tap-dance 170 (down pgdn))
+  home (tap-dance 200 (home end))
+  lsft (tap-hold 200 200 (tap-dance 180 ((macro M-a lctl) (macro M-f lctl))) lsft)
+  rsft (tap-hold 200 200 (tap-dance 180 ((macro M-f lctl) (macro M-a lctl))) rsft)
+  caps (tap-hold 200 200 C-spc (layer-while-held capc))
+  2 (chord piano 2)
+  3 (chord piano 3)
+  q (chord piano q)
+  w (chord piano w)
+  e (chord piano e)
+  r (chord piano r)
+  a (t! charmod a lalt)
+  s (t! charmod s lsft)
+  d (t! charmod d lctl)
+  f (chord piano f)
+  g (chord piano g)
+  x (chord piano x)
+  c (chord piano c)
+  v (chord piano v)
+  b (chord piano b)
+  9 (chord piano 9)
+  0 (chord piano 0)
+  - (chord piano -)
+  u (chord piano u)
+  i (chord piano i)
+  o (chord piano o)
+  p (chord piano p)
+  h (chord piano h)
+  j (chord piano j)
+  k (t! charmod k rctl)
+  l (t! charmod l rsft)
+  ; (t! charmod ; ralt)
+  m (chord piano m)
+  , (chord piano ,)
+  . (chord piano .)
+  rctl (tap-hold 200 200 C-f12 rctl)
+  spc  (tap-hold 200 200 spc (layer-while-held nav))
+)
+
+(deflayermap (nav)
+  i up
+  j left
+  k down
+  l right
+  h home
+  ; end
+  y bspc
+  u del
+  g `
+  f esc
+  m mute
+  , vold
+  . volu
+  q 1 ;; kp1
+  w 2 ;; kp2
+  e 3 ;; kp3
+  a 4 ;; kp4
+  s 5
+  d 6
+  z 7
+  x 8
+  c 9
+  v 0
+)
+
+(deflayermap (capc)
+  g `
+  f esc
+  i (mwheel-up 50 120)
+  j mlft
+  k mmid
+  l mrtp ;; mrgt
+  , (mwheel-down 50 120)
+  u (mwheel-left 50 120)
+  o (mwheel-right 50 120)
+)
+
+(deflayermap (himep)
+  o (macro . o spc)
+  k (macro . k spc)
+  i (macro . i spc)
+  y (macro . y spc)
+  p (macro . p spc)
+  h (macro . h spc)
+  j (macro . j spc)
+  . (macro . spc)
+  f (macro . f spc)
+  g (macro . g spc)
+)
