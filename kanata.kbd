@@ -1,5 +1,6 @@
 (defcfg
   process-unmapped-keys yes
+;; danger-enable-cmd yes
 )
 
 (defsrc
@@ -37,6 +38,7 @@
   ( g ) g
   ( 2 3 ) esc
   ( w e ) A-left
+  ( q w ) M-a
   ( e f ) home
   ( r g ) C-S--
   ( x ) x
@@ -45,7 +47,6 @@
   ( b ) b
   ( 9 ) 9
   ( 0 ) 0
-  ( - ) -
   ( u ) u
   ( i ) i
   ( o ) o
@@ -59,6 +60,7 @@
   ( c v ) mmid
   ( v b ) enter
   ( i o ) A-right
+  ( o p ) M-f
   ( i j ) end
   ( u h ) pgup
   ( h b ) pgdn
@@ -69,13 +71,18 @@
 
 (deflayermap (main)
   ;; for some Notebook combine up/down/left/right with pgup/pgdn/home/end
-  ;; use tap-dance to set one key with multiple functions by tapping more than once
+  ;; KEY (tap-hold tap-time hold-time ACTION (layer-while-held LAYER))
   ;; KEY (tap-dance timeout ACTIONa ACTIONb ACTIONc)
-  up (tap-dance 170 (up pgup))
-  down (tap-dance 170 (down pgdn))
+  ;; use tap-dance to set one key with multiple functions by tapping more than once
+  = (tap-dance 200 (= S-=)) ;; tap "=" twice to print "+"
+  - (tap-dance 200 (- S--))
+  \ (tap-dance 200 (\ S-\))
+  esc (tap-dance 200 (esc S-`)) ;; for 61 keys without "`~" to print "~"
+  up (tap-dance 150 (up pgup))
+  down (tap-dance 150 (down pgdn))
   home (tap-dance 200 (home end))
-  lsft (tap-hold 200 200 (tap-dance 180 ((macro M-a lctl) (macro M-f lctl))) lsft)
-  rsft (tap-hold 200 200 (tap-dance 180 ((macro M-f lctl) (macro M-a lctl))) rsft)
+  lsft (tap-hold 200 200 (tap-dance 180 ((macro M-a 60 lctl) (macro M-f 60 lctl))) lsft)
+  rsft (tap-hold 200 200 (tap-dance 180 ((macro M-f 60 lctl) (macro M-a 60 lctl))) rsft)
   caps (tap-hold 200 200 C-spc (layer-while-held capc))
   2 (chord piano 2)
   3 (chord piano 3)
@@ -94,7 +101,6 @@
   b (chord piano b)
   9 (chord piano 9)
   0 (chord piano 0)
-  - (chord piano -)
   u (chord piano u)
   i (chord piano i)
   o (chord piano o)
@@ -111,7 +117,16 @@
   spc  (tap-hold 200 200 spc (layer-while-held nav))
 )
 
+(deflayermap (blockout2)
+  n (layer-switch main) ;; to release this layer and return to "main"
+  i up
+  j left
+  k down
+  l right
+)
+
 (deflayermap (nav)
+  n (layer-switch blockout2) ;; to lock i j k l for game "blockout2"
   i up
   j left
   k down
@@ -121,14 +136,15 @@
   y bspc
   u del
   g `
+  r S-` ;; for 61 keys without "`~" key to print out "~"
   f esc
   m mute
   , vold
   . volu
-  q 1 ;; kp1
-  w 2 ;; kp2
-  e 3 ;; kp3
-  a 4 ;; kp4
+  q 1
+  w 2
+  e 3
+  a 4
   s 5
   d 6
   z 7
@@ -141,9 +157,9 @@
   g `
   f esc
   i (mwheel-up 50 120)
-  j mlft
-  k mmid
-  l mrtp ;; mrgt
+  j mltp
+  k mmtp
+  l mrtp
   , (mwheel-down 50 120)
   u (mwheel-left 50 120)
   o (mwheel-right 50 120)
@@ -160,4 +176,20 @@
   . (macro . spc)
   f (macro . f spc)
   g (macro . g spc)
+)
+
+(deflayermap (mmouse)
+  t (movemouse-speed 200)
+  f (movemouse-speed 50)
+  s (movemouse-speed 25)
+  w mlft 
+  r mrgt
+  y (mwheel-up 50 120)
+  h (mwheel-down 50 120)
+  u (mwheel-left 50 120)
+  o (mwheel-right 50 120)
+  i (movemouse-up 4 3)
+  j (movemouse-left 4 3)
+  k (movemouse-down 4 3)
+  l (movemouse-right 4 3)
 )
